@@ -5,6 +5,8 @@ command_string="spamassassin --lint"
 
 # Copy rules to the right location
 
+echo $PWD
+
 cp ./*\.cf /etc/spamassassin/
 
 echo "Command: $command_string"
