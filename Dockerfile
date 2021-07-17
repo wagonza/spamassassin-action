@@ -1,7 +1,7 @@
 FROM debian:10.10-slim
 
 LABEL org.opencontainers.image.description="SpamAssassin container for GitHub Action spamassassin"
-LABEL org.opencontainers.image.source=https://github.com/hspaans/spamassassin-action
+LABEL org.opencontainers.image.source=https://github.com/wagonza/spamassassin-action
 
 # Avoid warnings by switching to noninteractive
 ENV DEBIAN_FRONTEND=noninteractive
