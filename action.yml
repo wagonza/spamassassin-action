@@ -7,12 +7,18 @@ inputs:
     description: "Source directory name"
     required: false
     default: /
+  excluded:
+    description: "Files to be excluded from sync"
+    required: false
+    default: ''
 
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/wagonza/spamassassin-action:v1.0.8'
+  image: 'docker://ghcr.io/wagonza/spamassassin-action:v1.0.11'
   env:
     ACTION_DIRECTORY: ${{ inputs.directory }}
+    EXCLUDED: ${{ inputs.excluded }}
+
 
 branding:
   icon: 'book'
