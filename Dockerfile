@@ -9,7 +9,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Configure apt and install packages
 # hadolint ignore=DL3008
 RUN apt-get update \
-    && apt-get -y install --no-install-recommends spamassassin rsync \
+    && apt-get -y install --no-install-recommends spamassassin rsync curl \
     # Clean up
     && apt-get autoremove -y \
     && apt-get clean -y \

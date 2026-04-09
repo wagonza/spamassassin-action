@@ -1,11 +1,49 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
-command_string="spamassassin --lint"
+mkdir -p /etc/spamassassin
 
-# Copy rules to the right location
+# Copy local .cf files first
+find "${ACTION_DIRECTORY}" -maxdepth 1 -type f -name "*.cf" | while read -r file; do
+  base="$(basename "$file")"
+  if [ -n "${EXCLUDED:-}" ] && [ "$base" = "$EXCLUDED" ]; then
+    echo "Skipping excluded file: $base"
+    continue
+  fi
+  cp "$file" /etc/spamassassin/
+done
 
-rsync --exclude ${EXCLUDED} ${ACTION_DIRECTORY}/*\.cf /etc/spamassassin/
+# Download extra rule files if provided
+if [ -n "${DOWNLOAD_URLS:-}" ]; then
+  echo "Downloading remote rule files..."
 
-echo "Command: $command_string"
-eval "$command_string"
+  i=1
+  while IFS= read -r url; do
+    [ -z "$url" ] && continue
+
+    filename="$(basename "${url%%\?*}")"
+
+    # Fallback if basename is empty or does not look useful
+    if [ -z "$filename" ] || [ "$filename" = "/" ]; then
+      filename="downloaded-${i}.cf"
+    fi
+
+    # Ensure .cf extension if you want predictable names
+    case "$filename" in
+      *.cf) ;;
+      *) filename="${filename}.cf" ;;
+    esac
+
+    echo "Fetching: $url -> /etc/spamassassin/$filename"
+    curl -fsSL "$url" -o "/etc/spamassassin/$filename"
+
+    i=$((i + 1))
+  done <<EOF
+${DOWNLOAD_URLS}
+EOF
+fi
+
+echo "Rules present in /etc/spamassassin:"
+ls -l /etc/spamassassin
+
+spamassassin --lint

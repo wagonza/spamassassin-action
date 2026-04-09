@@ -1,4 +1,6 @@
+
 ---
+
 name: 'SpamAssassin'
 description: 'Verify SpamAssassin rules in your Github Actions.'
 
@@ -11,14 +13,18 @@ inputs:
     description: "Files to be excluded from sync"
     required: false
     default: ''
+  download_urls:
+    description: "Optional newline-separated list of rule URLs to download"
+    required: false
+    default: ''
 
 runs:
   using: 'docker'
-  image: 'docker://ghcr.io/wagonza/spamassassin-action:v1.0.11'
+  image: 'docker://ghcr.io/wagonza/spamassassin-action:v1.0.12'
   env:
     ACTION_DIRECTORY: ${{ inputs.directory }}
     EXCLUDED: ${{ inputs.excluded }}
-
+    DOWNLOAD_URLS: ${{ inputs.download_urls }}
 
 branding:
   icon: 'book'
